@@ -13,8 +13,9 @@ public class MailserviceServersideApplication {
         System.out.println("Serverside is running");
     }
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
+	@Bean
+	public ModelMapper modelMapper(){
+		return new ModelMapper();
+	}
+
 }
