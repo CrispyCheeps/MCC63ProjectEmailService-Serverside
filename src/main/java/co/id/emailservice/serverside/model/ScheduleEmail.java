@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Table(name = "tb_scheduleEmail")
@@ -30,7 +31,7 @@ public class ScheduleEmail {
     private Konten konten;
 
     @Column(nullable = false)
-    private LocalDateTime tanggalKirim;
-
+//    private LocalDateTime tanggalKirim;
+    private Date tanggalKirim;
 
 }
