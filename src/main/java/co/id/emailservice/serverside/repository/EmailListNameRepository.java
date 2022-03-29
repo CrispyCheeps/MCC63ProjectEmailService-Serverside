@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EmailListNameRepository extends JpaRepository<EmailListName, Long> {
+
+    EmailListName findByName(String name);
+
 }

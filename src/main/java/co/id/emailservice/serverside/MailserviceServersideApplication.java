@@ -18,4 +18,9 @@ public class MailserviceServersideApplication {
         return new ModelMapper();
     }
 
+	@Bean
+	public ModelMapper modelMapper(){
+		return new ModelMapper();
+	}
+
 }
