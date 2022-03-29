@@ -46,15 +46,6 @@ public class UserService {
     }
 
     public User create(UserData userData) {
-        //User user = modelMapper.map(userData, User.class);
-//        //return userRepository.save(user);
-//        User user = new User();
-//        user.setName(userData.getName());
-//        user.setEmail(userData.getEmail());
-//        user.setPassword(userData.getPassword());
-//        List<Role> role = new ArrayList<>();
-//        role.add(roleService.getById(userData.getRoleId()));
-//        user.setRole(role);
         User user = modelMapper.map(userData, User.class);
         user.setId(null);
         user.setRole(roleService.getById(userData.getRoleId()));

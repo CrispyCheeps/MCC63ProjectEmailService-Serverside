@@ -1,6 +1,7 @@
 package co.id.emailservice.serverside.service;
 
 import co.id.emailservice.serverside.model.EmailListName;
+import co.id.emailservice.serverside.model.Konten;
 import co.id.emailservice.serverside.model.Participant;
 import co.id.emailservice.serverside.model.dto.EmailListNameData;
 import co.id.emailservice.serverside.repository.EmailListNameRepository;
@@ -35,15 +36,6 @@ public class EmailListNameService {
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "EmailListName Not Found"));
     }
 
-//    public EmailListName create(EmailListName emailListName) {
-//        if (emailListName.getId() != null) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "EmailListName already exist");
-//        }
-//        if (emailListNameRepository.findByName(emailListName.getName()) != null) {
-//            throw new ResponseStatusException(HttpStatus.CONFLICT, "EmailListName name already exist");
-//        }
-//        return emailListNameRepository.save(emailListName);
-//    }
 
     public EmailListName create(EmailListNameData emailListNameData) {
         if (emailListNameRepository.findByName(emailListNameData.getName()) != null) {
@@ -58,8 +50,9 @@ public class EmailListNameService {
     }
 
     public EmailListName update(Long id, EmailListName emailListName) {
-        getById(id);
+        EmailListName e = getById(id);
         emailListName.setId(id);
+        emailListName.setUser(e.getUser());
         return emailListNameRepository.save(emailListName);
     }
 

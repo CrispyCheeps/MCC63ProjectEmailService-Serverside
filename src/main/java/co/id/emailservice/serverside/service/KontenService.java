@@ -1,6 +1,7 @@
 package co.id.emailservice.serverside.service;
 
 import co.id.emailservice.serverside.model.Konten;
+import co.id.emailservice.serverside.model.User;
 import co.id.emailservice.serverside.model.dto.KontenData;
 import co.id.emailservice.serverside.repository.KontenRepository;
 import org.modelmapper.ModelMapper;
@@ -15,13 +16,15 @@ import java.util.List;
 public class KontenService {
 
     private KontenRepository kontenRepository;
+    private UserService userService;
     private ModelMapper modelMapper;
     private TemplateService templateService;
 
+
     @Autowired
-    public KontenService(KontenRepository kontenRepository, ModelMapper modelMapper,
-                         TemplateService templateService) {
+    public KontenService(KontenRepository kontenRepository, UserService userService, ModelMapper modelMapper, TemplateService templateService) {
         this.kontenRepository = kontenRepository;
+        this.userService = userService;
         this.modelMapper = modelMapper;
         this.templateService = templateService;
     }
@@ -38,6 +41,7 @@ public class KontenService {
     public Konten create(KontenData kontenData) {
         Konten konten = modelMapper.map(kontenData, Konten.class);
         konten.setId(null);
+        konten.setUser(userService.getById(kontenData.getUser()));
         konten.setTemplate(templateService.getById(kontenData.getTemplate()));
         if (konten.getId() != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Konten ID already exist");
@@ -49,8 +53,10 @@ public class KontenService {
       karena kan udh ada kontennya di dlm template td, tinggal user edit2 isi konten aja
      */
     public Konten update(Long id, Konten konten) {
-        getById(id); //biar gausa buat method lg kan udh ada method panggil id diatas
+        Konten k = getById(id);
         konten.setId(id);
+        konten.setUser(k.getUser());
+        konten.setTemplate(k.getTemplate());
         return kontenRepository.save(konten);
     }
 
