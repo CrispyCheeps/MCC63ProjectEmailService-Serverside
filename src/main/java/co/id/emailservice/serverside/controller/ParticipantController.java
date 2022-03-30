@@ -37,22 +37,17 @@ public class ParticipantController {
         return new ResponseEntity(participantService.getById(id), HttpStatus.OK);
     }
 
-//    @GetMapping("/addParticipants")
-//    public ResponseEntity<Participant> addParticipants() {
-//        return  ResponseEntity(participantService.addParticipants() throws IOException, HttpStatus.OK);
-//    }
-
     @PostMapping
     public ResponseEntity<Participant> create(@RequestBody ParticipantData participantData) {
         return new ResponseEntity(participantService.create(participantData), HttpStatus.CREATED);
     }
 
-    @PostMapping("/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/upload/{emailListNameId}")
+    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("emailListNameId") Long emailListNameId) {
         String message = "";
         if (ExcelHelper.hasExcelFormat(file)) {
             try {
-                participantService.addParticipantsFromExcel(file);
+                participantService.addParticipantsFromExcel(file, emailListNameId);
                 message = "Uploaded the file successfully: " + file.getOriginalFilename();
                 return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
             } catch (Exception e) {

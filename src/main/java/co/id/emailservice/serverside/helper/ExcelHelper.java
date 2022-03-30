@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ExcelHelper {
     public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    static String[] HEADERS = { "name", "email", "emailListNameId" };
+    static String[] HEADERS = { "name", "email" };
     static String SHEET = "Sheet1";
     public static boolean hasExcelFormat(MultipartFile file) {
         if (!TYPE.equals(file.getContentType())) {
@@ -30,11 +30,10 @@ public class ExcelHelper {
             Workbook workbook = new XSSFWorkbook(is);
             Sheet sheet = workbook.getSheet(SHEET);
             Iterator<Row> rows = sheet.iterator();
-            List<ParticipantData> participantsData = new ArrayList<ParticipantData>();
+            List<ParticipantData> participantsData = new ArrayList<>();
             int rowNumber = 0;
             while (rows.hasNext()) {
                 Row currentRow = rows.next();
-                // skip header
                 if (rowNumber == 0) {
                     rowNumber++;
                     continue;
@@ -47,24 +46,19 @@ public class ExcelHelper {
                     switch (cellIdx) {
                         case 0:
                             participantData.setName(currentCell.getStringCellValue());
-//                            participantData.setId((long) currentCell.getNumericCellValue());
-//                            tutorial.setId((long) currentCell.getNumericCellValue());
                             break;
                         case 1:
                             participantData.setEmail(currentCell.getStringCellValue());
-//                            tutorial.setTitle(currentCell.getStringCellValue());
                             break;
-                        case 2:
-                            participantData.setEmailListNameId((long) currentCell.getNumericCellValue());
-//                            tutorial.setDescription(currentCell.getStringCellValue());
-                            break;
+//                        case 2:
+//                            participantData.setEmailListNameId((long) currentCell.getNumericCellValue());
+//                            break;
                         default:
                             break;
                     }
                     cellIdx++;
                 }
                 participantsData.add(participantData);
-//                tutorials.add(tutorial);
             }
             workbook.close();
             return participantsData;
