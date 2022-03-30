@@ -17,8 +17,8 @@ import java.util.List;
 
 public class ExcelHelper {
     public static String TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
-    static String[] HEADERs = { "Id", "Title", "Description", "Published" };
-    static String SHEET = "Tutorials";
+    static String[] HEADERS = { "name", "email", "emailListNameId" };
+    static String SHEET = "Sheet1";
     public static boolean hasExcelFormat(MultipartFile file) {
         if (!TYPE.equals(file.getContentType())) {
             return false;

@@ -46,14 +46,10 @@ public class ParticipantService {
     }
 
     public Participant create(ParticipantData participantData) {
-//        Participant participant = modelMapper.map(participantData, Participant.class);
-//        participant.setId(null);
-//        participant.setEmailListName(emailListNameService.getById(participantData.getEmailListNameId()));
-//        return participantRepository.save(participant);
-        List<Participant> participants = new ArrayList<>();
-        participant.setName(participantsData.getName());
-        participant.setEmail(participantsData.getEmail());
-        participant.setEmailListNameId(participantsData.getEmailListNameId());
+        Participant participant = modelMapper.map(participantData, Participant.class);
+        participant.setId(null);
+        participant.setEmailListName(emailListNameService.getById(participantData.getEmailListNameId()));
+        return participantRepository.save(participant);
     }
 
     public Participant update(Long id, Participant participant) {
