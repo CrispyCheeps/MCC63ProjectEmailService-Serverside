@@ -69,11 +69,13 @@ public class ParticipantService {
         try {
             List<ParticipantData> participantsData = ExcelHelper.excelToParticipants(file.getInputStream());
             List<Participant> participants = modelMapper.map(participantsData, new TypeToken<List<Participant>>() {}.getType());
+            for (Participant participant : participants) {
+                participant.setId(null);
+            }
             participantRepository.saveAll(participants);
 
         }catch (IOException e){
             throw new RuntimeException("fail to store excel data: " + e.getMessage());
         }
     }
-
 }
