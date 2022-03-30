@@ -22,6 +22,8 @@ public class Template {
     @Column(nullable = false)
     private String name;
 
+    //Kurang String path(?) buat nyimpen link resources HTML nya
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "template")
     private List<Konten> kontens;

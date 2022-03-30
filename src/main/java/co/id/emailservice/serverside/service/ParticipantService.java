@@ -1,15 +1,24 @@
 package co.id.emailservice.serverside.service;
 
+import co.id.emailservice.serverside.helper.ExcelHelper;
 import co.id.emailservice.serverside.model.Participant;
 import co.id.emailservice.serverside.model.dto.ParticipantData;
-import co.id.emailservice.serverside.repository.EmailListNameRepository;
 import co.id.emailservice.serverside.repository.ParticipantRepository;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.servlet.http.Part;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +46,14 @@ public class ParticipantService {
     }
 
     public Participant create(ParticipantData participantData) {
-        Participant participant = modelMapper.map(participantData, Participant.class);
-        participant.setId(null);
-        participant.setEmailListName(emailListNameService.getById(participantData.getEmailListNameId()));
-        return participantRepository.save(participant);
+//        Participant participant = modelMapper.map(participantData, Participant.class);
+//        participant.setId(null);
+//        participant.setEmailListName(emailListNameService.getById(participantData.getEmailListNameId()));
+//        return participantRepository.save(participant);
+        List<Participant> participants = new ArrayList<>();
+        participant.setName(participantsData.getName());
+        participant.setEmail(participantsData.getEmail());
+        participant.setEmailListNameId(participantsData.getEmailListNameId());
     }
 
     public Participant update(Long id, Participant participant) {
@@ -54,6 +67,17 @@ public class ParticipantService {
         Participant participant = getById(id);
         participantRepository.delete(participant);
         return participant;
+    }
+
+    public void addParticipantsFromExcel (MultipartFile file) {
+        try {
+            List<ParticipantData> participantsData = ExcelHelper.excelToParticipants(file.getInputStream());
+            List<Participant> participants = modelMapper.map(participantsData, new TypeToken<List<Participant>>() {}.getType());
+            participantRepository.saveAll(participants);
+
+        }catch (IOException e){
+            throw new RuntimeException("fail to store excel data: " + e.getMessage());
+        }
     }
 
 }
