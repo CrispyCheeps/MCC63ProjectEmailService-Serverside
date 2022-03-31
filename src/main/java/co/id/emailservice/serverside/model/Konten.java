@@ -19,7 +19,7 @@ public class Konten {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String header;
+    private String subject;
     private String body;
     private String footer;
     private String attachment;

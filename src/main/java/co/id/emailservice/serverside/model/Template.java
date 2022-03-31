@@ -23,6 +23,7 @@ public class Template {
     private String name;
 
     //Kurang String path(?) buat nyimpen link resources HTML nya
+    private String pathHtml;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToMany(mappedBy = "template")
