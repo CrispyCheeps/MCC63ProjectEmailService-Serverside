@@ -5,40 +5,46 @@ import co.id.emailservice.serverside.model.EmailListName;
 import co.id.emailservice.serverside.model.Konten;
 import co.id.emailservice.serverside.model.Participant;
 import co.id.emailservice.serverside.model.Template;
+import co.id.emailservice.serverside.model.dto.KontenData;
+import lombok.AllArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.server.ResponseStatusException;
 import org.thymeleaf.context.Context;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.util.ArrayList;
+import java.util.List;
 
+@Service
+@AllArgsConstructor
 public class EmailService {
 
     private JavaMailSender emailSender;
-    private TemplateEngineConfig templateEngineConfig;
-
-    @Autowired
-    public EmailService(JavaMailSender emailSender, TemplateEngineConfig templateEngineConfig) {
-        this.emailSender = emailSender;
-        this.templateEngineConfig = templateEngineConfig;
-    }
+    private SpringTemplateEngine springTemplateEngine;
+    private ParticipantService participantService;
+    private EmailListNameService emailListNameService;
+    private ModelMapper modelMapper;
 
     /*
-    Behavior eksekusi code ada :
-     synchronus = seri (antrian, analogi antrian di dokter)
-     asynchronus = paralel (analogi pemesanan makanan di restoran antara waitress dgn cheff)
-     */
+            Behavior eksekusi code ada :
+             synchronus = seri (antrian, analogi antrian di dokter)
+             asynchronus = paralel (analogi pemesanan makanan di restoran antara waitress dgn cheff)
+             */
     @Async //Spy eksekusi tdk berhenti di task method dibawah (loncat ke task berikutnya)
-    public String sendTemplateEmail(Konten konten, Participant participant) {
+    public String sendTemplateEmail(KontenData kontenData, Participant participant) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            Template template = konten.getTemplate();
+            Konten konten = modelMapper.map(kontenData, Konten.class);
 
 //            String content = "Dear [[name]],<br>"
 //                    + "Please click the link below to verify your registration:<br>"
@@ -51,7 +57,7 @@ public class EmailService {
             Context context = new Context();
             context.setVariable("konten", konten);
 
-            String content = templateEngineConfig.springTemplateEngine().process("template1", context);
+            String content = springTemplateEngine.process("template1", context);
             //ambil dari list scheduling trus dilooping trus dikasih scheduled annotation biar bisa discheduling
             helper.setTo(participant.getEmail());
             //mungkin subject ini bisa ditambah disimpen didb tp gatau taruh mn
@@ -64,4 +70,25 @@ public class EmailService {
         }
         return "Check Your Email to Verify Your Account";
     }
+
+//    public EmailData sendListOfEmail(SendToAllData sendToAllData){
+//        EmailData emailData = new EmailData();
+//        emailData.setSubject(sendToAllData.getSubject());
+//        emailData.setBody(sendToAllData.getBody());
+//        sendToAllData.getToEmail().forEach( data -> {
+//            emailData.setToEmail(data);
+//            sendSimpleEmail(emailData);
+//        });
+//        return emailData;
+//    }
+
+    public String sendTemplateEmailToListParticipant(Long emailListNameId, KontenData kontenData) {
+        List<Participant> listParticipantEmail = participantService.getFilterParticipantByEmailListNameId(emailListNameId);
+        for (Participant participant : listParticipantEmail) {
+            sendTemplateEmail(kontenData, participant);
+        }
+        return "Email terkirim wkwk";
+    }
+
+
 }

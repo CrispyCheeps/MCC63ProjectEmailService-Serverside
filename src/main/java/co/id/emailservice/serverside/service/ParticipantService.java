@@ -79,4 +79,13 @@ public class ParticipantService {
             throw new RuntimeException("fail to store excel data: " + e.getMessage());
         }
     }
+
+    public List<Participant> getFilterEmailParticipantByEmailListNameId(Long id){
+        return participantRepository.filterEmailParticipantByEmailListNameId(id);
+    }
+
+    public List<Participant> getFilterParticipantByEmailListNameId(Long id){
+        return participantRepository.filterParticipantByEmailListNameId(id);
+    }
+
 }

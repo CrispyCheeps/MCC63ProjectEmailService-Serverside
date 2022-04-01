@@ -5,7 +5,9 @@
  */
 package co.id.emailservice.serverside.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  *

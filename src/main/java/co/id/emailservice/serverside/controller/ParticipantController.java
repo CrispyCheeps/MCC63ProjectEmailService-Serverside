@@ -69,6 +69,14 @@ public class ParticipantController {
         return new ResponseEntity(participantService.delete(id), HttpStatus.OK);
     }
 
+    @GetMapping("/getEmailParticipantByEmailListName/{id}")
+    public ResponseEntity<List<Participant>> getFilterEmailParticipantByEmailListNameId(@PathVariable Long id){
+        return new ResponseEntity(participantService.getFilterEmailParticipantByEmailListNameId(id), HttpStatus.OK);
+    }
 
+    @GetMapping("/getFilterParticipantByEmailListNameId/{id}")
+    public ResponseEntity<List<Participant>> getFilterParticipantByEmailListNameId(@PathVariable Long id){
+        return new ResponseEntity(participantService.getFilterParticipantByEmailListNameId(id), HttpStatus.OK);
+    }
 
 }

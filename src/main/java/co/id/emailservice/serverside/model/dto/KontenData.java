@@ -5,7 +5,7 @@ import java.text.SimpleDateFormat;
 
 @Data
 public class KontenData {
-    private String header;
+    private String subject;
     private String body;
     private String footer;
     private String attachment;

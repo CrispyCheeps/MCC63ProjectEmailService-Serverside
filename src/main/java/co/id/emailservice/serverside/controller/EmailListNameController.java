@@ -31,11 +31,6 @@ public class EmailListNameController {
         return new ResponseEntity(emailListNameService.getById(id), HttpStatus.OK);
     }
 
-//    @PostMapping
-//    public ResponseEntity<EmailListName> create(@RequestBody EmailListName emailListName) {
-//        return new ResponseEntity(emailListNameService.create(emailListName), HttpStatus.CREATED);
-//    }
-
     @PostMapping
     public ResponseEntity<EmailListName> create(@RequestBody EmailListNameData emailListNameData) {
         return new ResponseEntity(emailListNameService.create(emailListNameData), HttpStatus.CREATED);
