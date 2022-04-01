@@ -22,7 +22,7 @@ public class Role {
     @Column(nullable = false)
     private String name;
 
+    @ManyToMany(mappedBy = "roles", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany(mappedBy = "role")
     private List<User> users;
 }

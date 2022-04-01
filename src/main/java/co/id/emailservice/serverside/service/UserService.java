@@ -48,14 +48,16 @@ public class UserService {
     public User create(UserData userData) {
         User user = modelMapper.map(userData, User.class);
         user.setId(null);
-        user.setRole(roleService.getById(userData.getRoleId()));
+        //kalau dicasting gini boleh?
+        user.setRoles((List<Role>) roleService.getById(userData.getRoleId()));
         return userRepository.save(user);
     }
     
     public User update(Long id, User user) {
         User u = getById(id);
         user.setId(id);
-        user.setRole(u.getRole());
+//        user.setRole(u.getRole());
+        user.setRoles(u.getRoles());
         return userRepository.save(user);
     }
     
