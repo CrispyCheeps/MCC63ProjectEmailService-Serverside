@@ -46,6 +46,9 @@ public class UserService {
     }
 
     public User create(UserData userData) {
+        if (userRepository.findByEmail(userData.getEmail()) != null) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Email has been already used");
+        }
         User user = modelMapper.map(userData, User.class);
         user.setId(null);
         //kalau dicasting gini boleh?

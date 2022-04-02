@@ -50,7 +50,9 @@ public class AppSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/user/**").hasAuthority("USER")
                 .anyRequest().permitAll()
                 .and()
-                .httpBasic();
+                .httpBasic()
+                .and()
+                .formLogin();
     }
 
     @Override
@@ -58,4 +60,6 @@ public class AppSecurityConfiguration extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean(); //To change body of generated methods, choose Tools | Templates.
     }
+
+
 }

@@ -28,4 +28,8 @@ public class AppUserDetailService implements UserDetailsService {
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not registered"));
         return new AppUserDetail(user);
     }
+
+    public String signUpUser(AppUserDetail appUserDetail) {
+        return "";
+    }
 }
