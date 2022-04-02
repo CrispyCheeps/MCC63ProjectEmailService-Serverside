@@ -14,6 +14,7 @@ import java.util.List;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,12 +28,14 @@ public class UserService {
     private UserRepository userRepository;
     private ModelMapper modelMapper;
     private RoleService roleService;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, ModelMapper modelMapper, RoleService roleService) {
+    public UserService(UserRepository userRepository, ModelMapper modelMapper, RoleService roleService, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.modelMapper = modelMapper;
         this.roleService = roleService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<User> getAll() {
@@ -49,10 +52,13 @@ public class UserService {
         if (userRepository.findByEmail(userData.getEmail()) != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email has been already used");
         }
+        userData.setPassword(passwordEncoder.encode(userData.getPassword()));
         User user = modelMapper.map(userData, User.class);
         user.setId(null);
         //kalau dicasting gini boleh?
-        user.setRoles((List<Role>) roleService.getById(userData.getRoleId()));
+        List<Role> role= new ArrayList<>();
+        role.add(roleService.getById(userData.getRoleId()));
+        user.setRoles(role);
         return userRepository.save(user);
     }
     

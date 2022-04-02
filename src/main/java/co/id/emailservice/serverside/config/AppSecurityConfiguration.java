@@ -4,6 +4,7 @@ import co.id.emailservice.serverside.service.AppUserDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -48,7 +49,8 @@ public class AppSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/participant/**").hasAuthority("USER")
 //                .antMatchers("/template/**").hasAuthority("USER")
 //                .antMatchers("/user/**").hasAuthority("USER")
-                .anyRequest().permitAll()
+                .antMatchers(HttpMethod.POST,"/user").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic()
                 .and()
