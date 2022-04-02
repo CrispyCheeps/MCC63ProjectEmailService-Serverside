@@ -29,9 +29,10 @@ public class ScheduleEmailController {
         return new ResponseEntity(scheduleEmailService.getById(id), HttpStatus.OK);
     }
 
-    @PostMapping("/{emailListNameId}/setSchedule/{kontenId}")
-    public ResponseEntity<ScheduleEmail> addSchedule(@PathVariable Long emailListNameId, @PathVariable Long kontenId, @RequestBody ScheduleEmailData scheduleEmailData) {
-        return new ResponseEntity(scheduleEmailService.addSchedule(emailListNameId, kontenId, scheduleEmailData), HttpStatus.CREATED);
+    @PostMapping
+    //dihapus pathVariabelnya bi ini krn nggaboleh ada business meaning di endpoint
+    public ResponseEntity<ScheduleEmail> addSchedule(@RequestBody ScheduleEmailData scheduleEmailData) {
+        return new ResponseEntity(scheduleEmailService.addSchedule(scheduleEmailData), HttpStatus.CREATED);
     }
 
 }

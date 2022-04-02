@@ -37,15 +37,34 @@ public class ScheduleEmailService {
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not Found"));
     }
 
-    public ScheduleEmail addSchedule(Long emailListNameId, Long kontenId, ScheduleEmailData scheduleEmailData) {
-        ScheduleEmail scheduleEmail = modelMapper.map(scheduleEmailData, ScheduleEmail.class);
-        scheduleEmail.setId(null);
-        scheduleEmail.setEmailListName(emailListNameService.getById(emailListNameId));
-        scheduleEmail.setKonten(kontenService.getById(kontenId));
+    //mskin String date aja bi scheduleEmailData
+    /*
+    void aja ini bi, krn ga ada kebutuhan.
+    ketika null set tgl kirim mjd new date / localDateTime now -> simpan ke db
+
+    void scheduleEmail () {
+    1.ketika user tdk menset tgl kirim / null -> kirim email, tgl kirim di-set localDateTime now -> save
+    2. ketika tgl kirim nya ada -> save db without send email.
+    }
+
+
+     */
+    public ScheduleEmail addSchedule(ScheduleEmailData scheduleEmailData) {
+//        ScheduleEmail scheduleEmail = modelMapper.map(scheduleEmailData, ScheduleEmail.class);
+        ScheduleEmail scheduleEmail = new ScheduleEmail();
+        scheduleEmail.setId(scheduleEmailData.getEmailListNameId());
+        //perlu diconvert dr string -> date ya bi yaa
+//        scheduleEmail.setTanggalKirim(scheduleEmailData.getTanggalKirim());
+        //harus objek bii
+        scheduleEmail.setEmailListName(emailListNameService.getById(scheduleEmailData.getEmailListNameId()));
+        scheduleEmail.setKonten(kontenService.getById(scheduleEmailData.getKontenId()));
         return scheduleEmailRepository.save(scheduleEmail);
     }
 
     // Non-Periodic Scheduler
+    /*
+    Msh blm lengkap, msh ada atribut yg perlu ditambahin (interval)
+     */
 //    @Scheduled
 //    public void runScheduler(Long emailListNameId, KontenData kontenData) {
 //        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
