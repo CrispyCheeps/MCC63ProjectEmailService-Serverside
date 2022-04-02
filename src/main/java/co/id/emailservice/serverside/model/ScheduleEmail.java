@@ -1,5 +1,6 @@
 package co.id.emailservice.serverside.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,7 @@ public class ScheduleEmail {
     private Konten konten;
 
     @Column(nullable = false)
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
 //    private LocalDateTime tanggalKirim;
     private Date tanggalKirim;
 

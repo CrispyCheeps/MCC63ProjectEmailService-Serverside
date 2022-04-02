@@ -24,4 +24,9 @@ public class EmailController {
         return new ResponseEntity(emailService.sendTemplateEmailToListParticipant(emailListNameId, kontenData), HttpStatus.OK);
     }
 
+    @PostMapping("/sendNow/{emailListNameId}")
+    public ResponseEntity<String> sendNow(@PathVariable Long emailListNameId, @RequestBody KontenData kontenData) {
+        return new ResponseEntity(emailService.sendNow(emailListNameId, kontenData), HttpStatus.OK);
+    }
+
 }

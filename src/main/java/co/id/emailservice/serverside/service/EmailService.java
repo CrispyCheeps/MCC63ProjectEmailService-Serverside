@@ -1,11 +1,10 @@
 package co.id.emailservice.serverside.service;
 
 import co.id.emailservice.serverside.config.TemplateEngineConfig;
-import co.id.emailservice.serverside.model.EmailListName;
-import co.id.emailservice.serverside.model.Konten;
-import co.id.emailservice.serverside.model.Participant;
-import co.id.emailservice.serverside.model.Template;
+import co.id.emailservice.serverside.model.*;
 import co.id.emailservice.serverside.model.dto.KontenData;
+import co.id.emailservice.serverside.model.dto.ScheduleEmailData;
+import co.id.emailservice.serverside.repository.ScheduleEmailRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,7 +21,9 @@ import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -33,6 +35,8 @@ public class EmailService {
     private ParticipantService participantService;
     private EmailListNameService emailListNameService;
     private ModelMapper modelMapper;
+    private ScheduleEmailRepository scheduleEmailRepository;
+    private KontenService kontenService;
 
     /*
             Behavior eksekusi code ada :
@@ -71,16 +75,13 @@ public class EmailService {
         return "Check Your Email to Verify Your Account";
     }
 
-//    public EmailData sendListOfEmail(SendToAllData sendToAllData){
-//        EmailData emailData = new EmailData();
-//        emailData.setSubject(sendToAllData.getSubject());
-//        emailData.setBody(sendToAllData.getBody());
-//        sendToAllData.getToEmail().forEach( data -> {
-//            emailData.setToEmail(data);
-//            sendSimpleEmail(emailData);
-//        });
-//        return emailData;
-//    }
+    public ScheduleEmail addSchedule(Long emailListNameId, Long kontenId, ScheduleEmailData scheduleEmailData) {
+        ScheduleEmail scheduleEmail = modelMapper.map(scheduleEmailData, ScheduleEmail.class);
+        scheduleEmail.setId(null);
+        scheduleEmail.setEmailListName(emailListNameService.getById(emailListNameId));
+        scheduleEmail.setKonten(kontenService.getById(kontenId));
+        return scheduleEmailRepository.save(scheduleEmail);
+    }
 
     public String sendTemplateEmailToListParticipant(Long emailListNameId, KontenData kontenData) {
         List<Participant> listParticipantEmail = participantService.getFilterParticipantByEmailListNameId(emailListNameId);
@@ -90,5 +91,19 @@ public class EmailService {
         return "Email terkirim wkwk";
     }
 
+    public String sendNow(Long emailListNameId, KontenData kontenData){
+        Konten konten = modelMapper.map(kontenData, Konten.class);
+        Date now = new Date();
+        ScheduleEmail scheduleEmail = new ScheduleEmail();
+        scheduleEmail.setId(emailListNameId);
+        scheduleEmail.setEmailListName(emailListNameService.getById(emailListNameId));
+        scheduleEmail.setKonten(kontenService.getById(konten.getId()));
+        scheduleEmail.setTanggalKirim(now);
+        scheduleEmailRepository.save(scheduleEmail);
+
+        sendTemplateEmailToListParticipant(emailListNameId, kontenData);
+
+        return "Email terkirim wkwk";
+    }
 
 }
