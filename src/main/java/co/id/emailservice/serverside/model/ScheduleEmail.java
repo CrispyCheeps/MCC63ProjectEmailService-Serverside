@@ -31,9 +31,7 @@ public class ScheduleEmail {
     @ManyToOne
     private Konten konten;
 
-    @Column(nullable = false)
-    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss")
-//    private LocalDateTime tanggalKirim;
-    private Date tanggalKirim;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm")
+    private LocalDateTime tanggalKirim;
 
 }

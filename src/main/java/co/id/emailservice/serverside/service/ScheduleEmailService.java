@@ -9,6 +9,7 @@ import co.id.emailservice.serverside.repository.ScheduleEmailRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -37,50 +38,32 @@ public class ScheduleEmailService {
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not Found"));
     }
 
-    //mskin String date aja bi scheduleEmailData
-    /*
-    void aja ini bi, krn ga ada kebutuhan.
-    ketika null set tgl kirim mjd new date / localDateTime now -> simpan ke db
-
-    void scheduleEmail () {
-    1.ketika user tdk menset tgl kirim / null -> kirim email, tgl kirim di-set localDateTime now -> save
-    2. ketika tgl kirim nya ada -> save db without send email.
-    }
-
-
-     */
-    public ScheduleEmail addSchedule(ScheduleEmailData scheduleEmailData) {
-//        ScheduleEmail scheduleEmail = modelMapper.map(scheduleEmailData, ScheduleEmail.class);
+        public ScheduleEmail addSchedule(ScheduleEmailData scheduleEmailData) {
         ScheduleEmail scheduleEmail = new ScheduleEmail();
-        scheduleEmail.setId(scheduleEmailData.getEmailListNameId());
-        //perlu diconvert dr string -> date ya bi yaa
-//        scheduleEmail.setTanggalKirim(scheduleEmailData.getTanggalKirim());
-        //harus objek bii
         scheduleEmail.setEmailListName(emailListNameService.getById(scheduleEmailData.getEmailListNameId()));
         scheduleEmail.setKonten(kontenService.getById(scheduleEmailData.getKontenId()));
+        if(scheduleEmailData.getTanggalKirim() == null) {
+            emailService.sendTemplateEmailToListParticipant(scheduleEmailData.getEmailListNameId(), scheduleEmailData.getKontenId());
+            scheduleEmail.setTanggalKirim(LocalDateTime.now());
+        } else {
+            DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); // sampai menitnya doang
+            LocalDateTime dateTime = LocalDateTime.parse(scheduleEmailData.getTanggalKirim(), dateTimeFormatter);
+            scheduleEmail.setTanggalKirim(dateTime);
+        }
         return scheduleEmailRepository.save(scheduleEmail);
     }
 
-    // Non-Periodic Scheduler
-    /*
-    Msh blm lengkap, msh ada atribut yg perlu ditambahin (interval)
-     */
-//    @Scheduled
-//    public void runScheduler(Long emailListNameId, KontenData kontenData) {
-//        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
-//        LocalDateTime now = LocalDateTime.now();
-//        System.out.println(dtf.format(now));
-//
-//        List<ScheduleEmail> scheduleEmailList = scheduleEmailRepository.findAll();
-//
-//        for (ScheduleEmail scheduleEmail : scheduleEmailList) {
-//            if (scheduleEmail.getTanggalKirim().equals(now)) {
-//                emailService.sendTemplateEmailToListParticipant(emailListNameId, kontenData);
-//            }
-//        }
-//
-//    }
+    @Scheduled(fixedRate = 60000L)
+    public void runScheduler() {
+        LocalDateTime now = LocalDateTime.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); // sampai menitnya doang
+//        LocalDateTime formatDateTime = now.format(dateTimeFormatter);
 
+        if(scheduleEmailRepository.findByTanggalKirim(now).isPresent()){
+            System.out.println(now);
+        }
+
+    }
 
 
 }

@@ -4,6 +4,7 @@ import co.id.emailservice.serverside.config.TemplateEngineConfig;
 import co.id.emailservice.serverside.model.*;
 import co.id.emailservice.serverside.model.dto.KontenData;
 import co.id.emailservice.serverside.model.dto.ScheduleEmailData;
+import co.id.emailservice.serverside.repository.KontenRepository;
 import co.id.emailservice.serverside.repository.ScheduleEmailRepository;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -37,27 +38,21 @@ public class EmailService {
     private ModelMapper modelMapper;
     private ScheduleEmailRepository scheduleEmailRepository;
     private KontenService kontenService;
+    private KontenRepository kontenRepository;
 
     /*
-            Behavior eksekusi code ada :
-             synchronus = seri (antrian, analogi antrian di dokter)
-             asynchronus = paralel (analogi pemesanan makanan di restoran antara waitress dgn cheff)
-             */
+    Behavior eksekusi code ada :
+     synchronus = seri (antrian, analogi antrian di dokter)
+     asynchronus = paralel (analogi pemesanan makanan di restoran antara waitress dgn cheff)
+     */
     @Async //Spy eksekusi tdk berhenti di task method dibawah (loncat ke task berikutnya)
-    public String sendTemplateEmail(KontenData kontenData, Participant participant) {
+    public String sendTemplateEmail(Long kontenId, Participant participant) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            Konten konten = modelMapper.map(kontenData, Konten.class);
+//            Konten konten = modelMapper.map(kontenData, Konten.class);
+            Konten konten = kontenRepository.getById(kontenId);
 
-//            String content = "Dear [[name]],<br>"
-//                    + "Please click the link below to verify your registration:<br>"
-//                    + "<h3><a href=\"[[URL]]\" target=\"_self\">VERIFY</a></h3>"
-//                    + "Thank you,<br>";
-//            content = content.replace("[[name]]", employee.getFullName());
-//            String verifyURL = "http://localhost:8088/api/employee/verify?username=" + user.getUsername() + "&code=" + user.getVerificationCode();
-//
-//            content = content.replace("[[URL]]", verifyURL);
             Context context = new Context();
             context.setVariable("konten", konten);
 
@@ -75,34 +70,11 @@ public class EmailService {
         return "Check Your Email to Verify Your Account";
     }
 
-    public ScheduleEmail addSchedule(Long emailListNameId, Long kontenId, ScheduleEmailData scheduleEmailData) {
-        ScheduleEmail scheduleEmail = modelMapper.map(scheduleEmailData, ScheduleEmail.class);
-        scheduleEmail.setId(null);
-        scheduleEmail.setEmailListName(emailListNameService.getById(emailListNameId));
-        scheduleEmail.setKonten(kontenService.getById(kontenId));
-        return scheduleEmailRepository.save(scheduleEmail);
-    }
-
-    public String sendTemplateEmailToListParticipant(Long emailListNameId, KontenData kontenData) {
+    public String sendTemplateEmailToListParticipant(Long emailListNameId, Long kontenId) {
         List<Participant> listParticipantEmail = participantService.getFilterParticipantByEmailListNameId(emailListNameId);
         for (Participant participant : listParticipantEmail) {
-            sendTemplateEmail(kontenData, participant);
+            sendTemplateEmail(kontenId, participant);
         }
-        return "Email terkirim wkwk";
-    }
-
-    public String sendNow(Long emailListNameId, KontenData kontenData){
-        Konten konten = modelMapper.map(kontenData, Konten.class);
-        Date now = new Date();
-        ScheduleEmail scheduleEmail = new ScheduleEmail();
-        scheduleEmail.setId(emailListNameId);
-        scheduleEmail.setEmailListName(emailListNameService.getById(emailListNameId));
-        scheduleEmail.setKonten(kontenService.getById(konten.getId()));
-        scheduleEmail.setTanggalKirim(now);
-        scheduleEmailRepository.save(scheduleEmail);
-
-        sendTemplateEmailToListParticipant(emailListNameId, kontenData);
-
         return "Email terkirim wkwk";
     }
 

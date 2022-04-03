@@ -19,14 +19,9 @@ public class EmailController {
         this.emailService = emailService;
     }
 
-    @PostMapping("/sendAll/{emailListNameId}")
-    public ResponseEntity<String> sendTemplateEmailToListParticipant(@PathVariable Long emailListNameId, @RequestBody KontenData kontenData) {
-        return new ResponseEntity(emailService.sendTemplateEmailToListParticipant(emailListNameId, kontenData), HttpStatus.OK);
-    }
-
-    @PostMapping("/sendNow/{emailListNameId}")
-    public ResponseEntity<String> sendNow(@PathVariable Long emailListNameId, @RequestBody KontenData kontenData) {
-        return new ResponseEntity(emailService.sendNow(emailListNameId, kontenData), HttpStatus.OK);
+    @PostMapping("{emailListNameId}/sendAll/{kontenId}")
+    public ResponseEntity<String> sendTemplateEmailToListParticipant(@PathVariable Long emailListNameId, @PathVariable Long kontenId) {
+        return new ResponseEntity(emailService.sendTemplateEmailToListParticipant(emailListNameId, kontenId), HttpStatus.OK);
     }
 
 }
