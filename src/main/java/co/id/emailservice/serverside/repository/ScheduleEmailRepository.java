@@ -10,5 +10,5 @@ import java.util.Optional;
 
 @Repository
 public interface ScheduleEmailRepository extends JpaRepository<ScheduleEmail, Long> {
-    Optional<List<ScheduleEmail>> findByTanggalKirim(LocalDateTime tanggalKirim);
+    ScheduleEmail findByTanggalKirim(LocalDateTime tanggalKirim);
 }

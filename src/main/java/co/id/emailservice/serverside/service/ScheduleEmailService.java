@@ -38,7 +38,7 @@ public class ScheduleEmailService {
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not Found"));
     }
 
-        public ScheduleEmail addSchedule(ScheduleEmailData scheduleEmailData) {
+    public ScheduleEmail addSchedule(ScheduleEmailData scheduleEmailData) {
         ScheduleEmail scheduleEmail = new ScheduleEmail();
         scheduleEmail.setEmailListName(emailListNameService.getById(scheduleEmailData.getEmailListNameId()));
         scheduleEmail.setKonten(kontenService.getById(scheduleEmailData.getKontenId()));
@@ -53,15 +53,21 @@ public class ScheduleEmailService {
         return scheduleEmailRepository.save(scheduleEmail);
     }
 
+//    @Scheduled(cron = "* * * * * ?")
     @Scheduled(fixedRate = 60000L)
     public void runScheduler() {
         LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); // sampai menitnya doang
+//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); // sampai menitnya doang
 //        LocalDateTime formatDateTime = now.format(dateTimeFormatter);
 
-        if(scheduleEmailRepository.findByTanggalKirim(now).isPresent()){
-            System.out.println(now);
-        }
+        ScheduleEmail scheduleEmail = scheduleEmailRepository.findByTanggalKirim(now);
+        System.out.println(scheduleEmail.getKonten().getId());
+
+//        if(scheduleEmailRepository.findByTanggalKirim(now) != null){
+//
+////            emailService.sendTemplateEmailToListParticipant(scheduleEmail.getEmailListName().getId(), scheduleEmail.getKonten().getId());
+//        }
+
 
     }
 
