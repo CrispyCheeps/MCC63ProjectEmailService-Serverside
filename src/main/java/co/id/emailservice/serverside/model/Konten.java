@@ -1,16 +1,21 @@
 package co.id.emailservice.serverside.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Entity
 @Table(name = "tb_konten")
-@Data
+//Kalau @Data  anotasi yg ada method2 di dlmnya ada toString
+
+/*
+    Signifikasi toString dengan FetchType lazily itu, toString itu butuh akses lgsg datanya
+    sdgkan lazily gabisa lgsg.
+ */
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Konten {
@@ -33,4 +38,6 @@ public class Konten {
 
     @ManyToOne
     private Template template;
+
+
 }

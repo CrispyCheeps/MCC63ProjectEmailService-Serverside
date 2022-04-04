@@ -1,9 +1,7 @@
 package co.id.emailservice.serverside.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.repository.cdi.Eager;
 
 import javax.persistence.*;
@@ -11,7 +9,8 @@ import java.util.List;
 
 @Entity
 @Table(name = "tb_user")
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {

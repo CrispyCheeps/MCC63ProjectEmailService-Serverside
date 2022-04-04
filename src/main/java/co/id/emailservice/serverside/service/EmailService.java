@@ -50,11 +50,7 @@ public class EmailService {
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-//            Konten konten = modelMapper.map(kontenData, Konten.class);
-            Konten konten = kontenRepository.getById(kontenId);
-
-//            konten.getId();
-//            konten.getSubject();
+            Konten konten = kontenRepository.findById(kontenId).get();
 
             Context context = new Context();
             context.setVariable("konten", konten);

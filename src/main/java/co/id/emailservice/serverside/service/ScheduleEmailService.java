@@ -7,8 +7,13 @@ import co.id.emailservice.serverside.model.dto.ParticipantData;
 import co.id.emailservice.serverside.model.dto.ScheduleEmailData;
 import co.id.emailservice.serverside.repository.ScheduleEmailRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Local;
 import org.modelmapper.ModelMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,6 +27,7 @@ import java.util.Optional;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ScheduleEmailService {
 
     private ScheduleEmailRepository scheduleEmailRepository;
@@ -39,6 +45,7 @@ public class ScheduleEmailService {
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Schedule not Found"));
     }
 
+
     public ScheduleEmail addSchedule(ScheduleEmailData scheduleEmailData) {
         ScheduleEmail scheduleEmail = new ScheduleEmail();
         scheduleEmail.setEmailListName(emailListNameService.getById(scheduleEmailData.getEmailListNameId()));
@@ -54,30 +61,58 @@ public class ScheduleEmailService {
         return scheduleEmailRepository.save(scheduleEmail);
     }
 
+    @Async
     @Scheduled(fixedRate = 10000L)
     public void runScheduler() {
         LocalDateTime dateTimeNow = LocalDateTime.now();
 //        System.out.println("before: " + dateTimeNow);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); // sampai menitnya doang
         String formatDateTimeNow = dateTimeNow.format(dateTimeFormatter);
-//        System.out.println("string dateTimeNow: " + formatDateTimeNow);
-        LocalDateTime dateTimeNowAfterFormat = LocalDateTime.parse(formatDateTimeNow, dateTimeFormatter);
-//        System.out.println("after: " + dateTimeNowAfter);
 
-        ScheduleEmail scheduledDateTime = scheduleEmailRepository.findByTanggalKirim(dateTimeNowAfterFormat);
+        /*
+        if (scheduleEmailRepository.findByTanggalKirim(dateTimeNow) != dateTimeNow) {
+            System.out.println("data ada");
+        } else {
+            System.out.println("data tidak ada");
+        }
+
+        List<ScheduleEmail> scheduledDateTime = scheduleEmailRepository.findByTanggalKirim(dateTimeNow);
+        for (ScheduleEmail scheduleEmail : scheduledDateTime) {
+
+        }
+        System.out.println(scheduledDateTime);
+
         if (scheduledDateTime != null) {
             System.out.println(scheduledDateTime.getId()); // emailListNameId
             System.out.println(scheduledDateTime.getKonten().getId()); // kontenId
             emailService.sendTemplateEmailToListParticipant(scheduledDateTime.getId(), scheduledDateTime.getKonten().getId());
         }
 
-//        Optional<ScheduleEmail> scheduledDateTime = scheduleEmailRepository.findByTanggalKirim(dateTimeNow);
-//        if (scheduledDateTime.isPresent()) {
-//            System.out.println(scheduledDateTime.get().getId());
-//            System.out.println(scheduledDateTime.get().getKonten().getId());
-//            emailService.sendTemplateEmailToListParticipant(scheduledDateTime.get().getId(), scheduledDateTime.get().getKonten().getId());
+        Optional<ScheduleEmail> scheduledDateTime = scheduleEmailRepository.findByTanggalKirim(dateTimeNow);
+        if (scheduledDateTime.isPresent()) {
+            System.out.println(scheduledDateTime.get().getId());
+            System.out.println(scheduledDateTime.get().getKonten().getId());
+            emailService.sendTemplateEmailToListParticipant(scheduledDateTime.get().getId(), scheduledDateTime.get().getKonten().getId());
+        }
+
+         */
+        log.info(formatDateTimeNow);
+        List<ScheduleEmail> scheduleEmails = scheduleEmailRepository.findByDate(formatDateTimeNow);
+        log.info(scheduleEmails.toString());
+        if (!scheduleEmails.isEmpty()) {
+            for (ScheduleEmail scheduleEmail : scheduleEmails) {
+                emailService.sendTemplateEmailToListParticipant(scheduleEmail.getEmailListName().getId(),
+                        scheduleEmail.getKonten().getId());
+                System.out.println("email terkirim wkwk");
+            }
+        }
+//        for (ScheduleEmail scheduleEmail : scheduleEmails) {
+//            scheduleEmail.getTanggalKirim();
 //        }
-//    }
+//        Logger logger = LoggerFactory.getLogger("SampleLogger");
+//        logger.info("check", scheduleEmail);
 
     }
+
 }
+
