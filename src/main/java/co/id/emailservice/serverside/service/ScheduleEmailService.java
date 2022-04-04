@@ -54,22 +54,22 @@ public class ScheduleEmailService {
         return scheduleEmailRepository.save(scheduleEmail);
     }
 
-//    @Scheduled(cron = "* * * * * ?")
-//    public void runScheduler() {
-//        LocalDateTime dateTimeNow = LocalDateTime.now();
-////        System.out.println("before: " + dateTimeNow);
-//        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); // sampai menitnya doang
-//        String formatDateTimeNow = dateTimeNow.format(dateTimeFormatter);
-////        System.out.println("string dateTimeNow: " + formatDateTimeNow);
-//        LocalDateTime dateTimeNowAfterFormat = LocalDateTime.parse(formatDateTimeNow, dateTimeFormatter);
-////        System.out.println("after: " + dateTimeNowAfter);
-//
-//        ScheduleEmail scheduledDateTime = scheduleEmailRepository.findByTanggalKirim(dateTimeNowAfterFormat);
-//        if (scheduledDateTime != null) {
-//            System.out.println(scheduledDateTime.getId()); // emailListNameId
-//            System.out.println(scheduledDateTime.getKonten().getId()); // kontenId
-//            emailService.sendTemplateEmailToListParticipant(scheduledDateTime.getId(), scheduledDateTime.getKonten().getId());
-//        }
+    @Scheduled(fixedRate = 10000L)
+    public void runScheduler() {
+        LocalDateTime dateTimeNow = LocalDateTime.now();
+//        System.out.println("before: " + dateTimeNow);
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); // sampai menitnya doang
+        String formatDateTimeNow = dateTimeNow.format(dateTimeFormatter);
+//        System.out.println("string dateTimeNow: " + formatDateTimeNow);
+        LocalDateTime dateTimeNowAfterFormat = LocalDateTime.parse(formatDateTimeNow, dateTimeFormatter);
+//        System.out.println("after: " + dateTimeNowAfter);
+
+        ScheduleEmail scheduledDateTime = scheduleEmailRepository.findByTanggalKirim(dateTimeNowAfterFormat);
+        if (scheduledDateTime != null) {
+            System.out.println(scheduledDateTime.getId()); // emailListNameId
+            System.out.println(scheduledDateTime.getKonten().getId()); // kontenId
+            emailService.sendTemplateEmailToListParticipant(scheduledDateTime.getId(), scheduledDateTime.getKonten().getId());
+        }
 
 //        Optional<ScheduleEmail> scheduledDateTime = scheduleEmailRepository.findByTanggalKirim(dateTimeNow);
 //        if (scheduledDateTime.isPresent()) {
@@ -79,4 +79,5 @@ public class ScheduleEmailService {
 //        }
 //    }
 
+    }
 }

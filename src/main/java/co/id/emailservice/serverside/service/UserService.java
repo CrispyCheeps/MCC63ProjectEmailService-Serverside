@@ -49,7 +49,7 @@ public class UserService {
     }
 
     public User create(UserData userData) {
-        if (userRepository.findByEmail(userData.getEmail()) != null) {
+        if (userRepository.findByEmail(userData.getEmail()).isPresent()){
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email has been already used");
         }
         userData.setPassword(passwordEncoder.encode(userData.getPassword()));
