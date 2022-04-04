@@ -1,5 +1,6 @@
 package co.id.emailservice.serverside.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,8 +31,7 @@ public class ScheduleEmail {
     @ManyToOne
     private Konten konten;
 
-    @Column(nullable = false)
-//    private LocalDateTime tanggalKirim;
-    private Date tanggalKirim;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm")
+    private LocalDateTime tanggalKirim;
 
 }
