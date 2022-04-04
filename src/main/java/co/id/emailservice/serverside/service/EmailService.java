@@ -53,6 +53,8 @@ public class EmailService {
 //            Konten konten = modelMapper.map(kontenData, Konten.class);
             Konten konten = kontenRepository.getById(kontenId);
 
+            konten.toString();
+
             Context context = new Context();
             context.setVariable("konten", konten);
 
