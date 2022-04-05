@@ -25,7 +25,8 @@ public class LoginService {
     private UserRepository userRepository;
 
     public LoginResponseData login(LoginData loginData) {
-        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(loginData.getEmail(), loginData.getPassword());
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(loginData.getEmail(),
+                loginData.getPassword());
         Authentication auth = authenticationManager.authenticate(authReq);
         SecurityContext sc = SecurityContextHolder.getContext();
         sc.setAuthentication(auth);

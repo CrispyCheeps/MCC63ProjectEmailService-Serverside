@@ -62,7 +62,7 @@ public class ScheduleEmailService {
     }
 
     @Async
-    @Scheduled(fixedRate = 10000L)
+    @Scheduled(fixedRate = 360000L)
     public void runScheduler() {
         LocalDateTime dateTimeNow = LocalDateTime.now();
 //        System.out.println("before: " + dateTimeNow);

@@ -41,6 +41,6 @@ public class User {
     private List<EmailListName> emailListName;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private List<Konten> kontens;
 }

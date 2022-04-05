@@ -50,11 +50,11 @@ public class AppSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/template/**").hasAuthority("USER")
 //                .antMatchers("/user/**").hasAuthority("USER")
                 .antMatchers(HttpMethod.POST,"/user").permitAll()
+                .antMatchers(HttpMethod.POST,"/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .httpBasic()
-                .and()
-                .formLogin();
+                .httpBasic();
+        //kalau udh ada client app gaperlu form login()
     }
 
     @Override
