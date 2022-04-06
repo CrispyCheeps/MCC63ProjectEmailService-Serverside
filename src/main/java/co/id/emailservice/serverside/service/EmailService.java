@@ -51,11 +51,12 @@ public class EmailService {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
             Konten konten = kontenRepository.findById(kontenId).get();
+            String template = konten.getTemplate().getName();
 
             Context context = new Context();
             context.setVariable("konten", konten);
 
-            String content = springTemplateEngine.process("template1", context);
+            String content = springTemplateEngine.process(template, context);
             //ambil dari list scheduling trus dilooping trus dikasih scheduled annotation biar bisa discheduling
             helper.setTo(participant.getEmail());
             //mungkin subject ini bisa ditambah disimpen didb tp gatau taruh mn
