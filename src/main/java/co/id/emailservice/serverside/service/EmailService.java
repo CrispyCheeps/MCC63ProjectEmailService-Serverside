@@ -4,6 +4,7 @@ import co.id.emailservice.serverside.config.TemplateEngineConfig;
 import co.id.emailservice.serverside.model.*;
 import co.id.emailservice.serverside.model.dto.KontenData;
 import co.id.emailservice.serverside.model.dto.ScheduleEmailData;
+import co.id.emailservice.serverside.repository.EmailListNameRepository;
 import co.id.emailservice.serverside.repository.KontenRepository;
 import co.id.emailservice.serverside.repository.ScheduleEmailRepository;
 import lombok.AllArgsConstructor;
@@ -39,6 +40,7 @@ public class EmailService {
     private ScheduleEmailRepository scheduleEmailRepository;
     private KontenService kontenService;
     private KontenRepository kontenRepository;
+    private EmailListNameRepository emailListNameRepository;
 
     /*
     Behavior eksekusi code ada :
@@ -46,11 +48,12 @@ public class EmailService {
      asynchronus = paralel (analogi pemesanan makanan di restoran antara waitress dgn cheff)
      */
     @Async //Spy eksekusi tdk berhenti di task method dibawah (loncat ke task berikutnya)
-    public String sendTemplateEmail(Long kontenId, Participant participant) {
+    public String sendTemplateEmail(String subject, Participant participant) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-            Konten konten = kontenRepository.findById(kontenId).get();
+//            Konten konten = kontenRepository.findById(kontenId).get();
+            Konten konten = kontenRepository.findBySubject(subject);
             String template = konten.getTemplate().getName();
 
             Context context = new Context();
@@ -70,12 +73,22 @@ public class EmailService {
         return "Check Your Email to Verify Your Account";
     }
 
-    public String sendTemplateEmailToListParticipant(Long emailListNameId, Long kontenId) {
-        List<Participant> listParticipantEmail = participantService.getFilterParticipantByEmailListNameId(emailListNameId);
+    public String sendTemplateEmailToListParticipant(String emailListName, String subject) {
+        EmailListName emailList = emailListNameRepository.findByName(emailListName);
+        Konten kontenSubject = kontenRepository.findBySubject(subject);
+        List<Participant> listParticipantEmail = participantService.getFilterParticipantByEmailListNameId(emailList.getId());
         for (Participant participant : listParticipantEmail) {
-            sendTemplateEmail(kontenId, participant);
+            sendTemplateEmail(kontenSubject.getSubject(), participant);
         }
         return "Email terkirim wkwk";
     }
+
+//    public String sendTemplateEmailToListParticipant(Long emailListNameId, Long kontenId) {
+//        List<Participant> listParticipantEmail = participantService.getFilterParticipantByEmailListNameId(emailListNameId);
+//        for (Participant participant : listParticipantEmail) {
+//            sendTemplateEmail(kontenId, participant);
+//        }
+//        return "Email terkirim wkwk";
+//    }
 
 }

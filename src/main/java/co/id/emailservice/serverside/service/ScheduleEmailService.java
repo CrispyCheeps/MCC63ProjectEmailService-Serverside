@@ -5,6 +5,8 @@ import co.id.emailservice.serverside.model.ScheduleEmail;
 import co.id.emailservice.serverside.model.dto.KontenData;
 import co.id.emailservice.serverside.model.dto.ParticipantData;
 import co.id.emailservice.serverside.model.dto.ScheduleEmailData;
+import co.id.emailservice.serverside.repository.EmailListNameRepository;
+import co.id.emailservice.serverside.repository.KontenRepository;
 import co.id.emailservice.serverside.repository.ScheduleEmailRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +37,8 @@ public class ScheduleEmailService {
     private ModelMapper modelMapper;
     private KontenService kontenService;
     private EmailListNameService emailListNameService;
+    private EmailListNameRepository emailListNameRepository;
+    private KontenRepository kontenRepository;
 
     public List<ScheduleEmail> getAll() {
         return scheduleEmailRepository.findAll();
@@ -48,10 +52,13 @@ public class ScheduleEmailService {
 
     public ScheduleEmail addSchedule(ScheduleEmailData scheduleEmailData) {
         ScheduleEmail scheduleEmail = new ScheduleEmail();
-        scheduleEmail.setEmailListName(emailListNameService.getById(scheduleEmailData.getEmailListNameId()));
-        scheduleEmail.setKonten(kontenService.getById(scheduleEmailData.getKontenId()));
+        scheduleEmail.setEmailListName(emailListNameRepository.findByName(scheduleEmailData.getEmailListName()));
+        scheduleEmail.setKonten(kontenRepository.findBySubject(scheduleEmailData.getSubject()));
+//        scheduleEmail.setEmailListName(emailListNameService.getById(scheduleEmailData.getEmailListNameId()));
+//        scheduleEmail.setKonten(kontenService.getById(scheduleEmailData.getKontenId()));
         if(scheduleEmailData.getTanggalKirim() == null) {
-            emailService.sendTemplateEmailToListParticipant(scheduleEmailData.getEmailListNameId(), scheduleEmailData.getKontenId());
+//            emailService.sendTemplateEmailToListParticipant(scheduleEmailData.getEmailListNameId(), scheduleEmailData.getKontenId());
+            emailService.sendTemplateEmailToListParticipant(scheduleEmailData.getEmailListName(), scheduleEmailData.getSubject());
             scheduleEmail.setTanggalKirim(LocalDateTime.now());
         } else {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"); // sampai menitnya doang
@@ -62,7 +69,7 @@ public class ScheduleEmailService {
     }
 
     @Async
-    @Scheduled(fixedRate = 360000L)
+    @Scheduled(fixedRate = 60000L)
     public void runScheduler() {
         LocalDateTime dateTimeNow = LocalDateTime.now();
 //        System.out.println("before: " + dateTimeNow);
@@ -101,8 +108,8 @@ public class ScheduleEmailService {
         log.info(scheduleEmails.toString());
         if (!scheduleEmails.isEmpty()) {
             for (ScheduleEmail scheduleEmail : scheduleEmails) {
-                emailService.sendTemplateEmailToListParticipant(scheduleEmail.getEmailListName().getId(),
-                        scheduleEmail.getKonten().getId());
+                emailService.sendTemplateEmailToListParticipant(scheduleEmail.getEmailListName().getName(),
+                        scheduleEmail.getKonten().getSubject());
                 System.out.println("email terkirim wkwk");
             }
         }

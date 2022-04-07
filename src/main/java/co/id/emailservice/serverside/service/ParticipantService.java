@@ -69,7 +69,6 @@ public class ParticipantService {
     public void addParticipantsFromExcel (MultipartFile file, String email) {
         try {
 
-
             User user = userRepository.findByEmail(email).get();
             EmailListName emailListName = new EmailListName();
             for (EmailListName e : user.getEmailListName()) {
