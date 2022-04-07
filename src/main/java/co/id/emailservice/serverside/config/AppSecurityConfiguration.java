@@ -51,7 +51,7 @@ public class AppSecurityConfiguration extends WebSecurityConfigurerAdapter {
 //                .antMatchers("/user/**").hasAuthority("USER")
                 .antMatchers(HttpMethod.POST,"/user").permitAll()
                 .antMatchers(HttpMethod.POST,"/login").permitAll()
-                .anyRequest().permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic();
         //kalau udh ada client app gaperlu form login()
