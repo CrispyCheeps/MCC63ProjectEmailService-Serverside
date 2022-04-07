@@ -5,6 +5,8 @@ import co.id.emailservice.serverside.model.Konten;
 import co.id.emailservice.serverside.model.Participant;
 import co.id.emailservice.serverside.model.dto.EmailListNameData;
 import co.id.emailservice.serverside.repository.EmailListNameRepository;
+import co.id.emailservice.serverside.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,18 +16,13 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class EmailListNameService {
 
     private EmailListNameRepository emailListNameRepository;
     private UserService userService;
     private ModelMapper modelMapper;
-
-    @Autowired
-    public EmailListNameService(EmailListNameRepository emailListNameRepository, UserService userService, ModelMapper modelMapper) {
-        this.emailListNameRepository = emailListNameRepository;
-        this.userService = userService;
-        this.modelMapper = modelMapper;
-    }
+    private UserRepository userRepository;
 
     public List<EmailListName> getAll() {
         return emailListNameRepository.findAll();
@@ -44,7 +41,7 @@ public class EmailListNameService {
 
         EmailListName emailListName = modelMapper.map(emailListNameData, EmailListName.class);
         emailListName.setId(null);
-        emailListName.setUser(userService.getById(emailListNameData.getUserId()));
+        emailListName.setUser(userRepository.findByEmail(emailListNameData.getUserName()).get());
 
         return emailListNameRepository.save(emailListName);
     }

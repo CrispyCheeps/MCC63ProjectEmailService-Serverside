@@ -17,4 +17,5 @@ public interface UserRepository extends JpaRepository <User, Long> {
     //Kalau filenya dlm db itu unique sebaiknya menggunakan optional (krn bisa jd ada / tdk ada)
     //kalau tdk ada bisa di-throw
     Optional<User> findByEmail(String email);
+
 }
