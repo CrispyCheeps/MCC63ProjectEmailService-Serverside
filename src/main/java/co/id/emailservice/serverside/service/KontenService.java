@@ -4,6 +4,8 @@ import co.id.emailservice.serverside.model.Konten;
 import co.id.emailservice.serverside.model.User;
 import co.id.emailservice.serverside.model.dto.KontenData;
 import co.id.emailservice.serverside.repository.KontenRepository;
+import co.id.emailservice.serverside.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,21 +15,14 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class KontenService {
 
     private KontenRepository kontenRepository;
     private UserService userService;
     private ModelMapper modelMapper;
     private TemplateService templateService;
-
-
-    @Autowired
-    public KontenService(KontenRepository kontenRepository, UserService userService, ModelMapper modelMapper, TemplateService templateService) {
-        this.kontenRepository = kontenRepository;
-        this.userService = userService;
-        this.modelMapper = modelMapper;
-        this.templateService = templateService;
-    }
+    private UserRepository userRepository;
 
     public List<Konten> getAll() {
         return kontenRepository.findAll();
@@ -41,7 +36,7 @@ public class KontenService {
     public Konten create(KontenData kontenData) {
         Konten konten = modelMapper.map(kontenData, Konten.class);
         konten.setId(null);
-        konten.setUser(userService.getById(kontenData.getUser()));
+        konten.setUser(userRepository.findByEmail(kontenData.getUserName()).get());
         konten.setTemplate(templateService.getById(kontenData.getTemplate()));
         if (konten.getId() != null) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Konten ID already exist");

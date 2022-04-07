@@ -9,8 +9,7 @@ public class KontenData {
     private String body;
     private String footer;
     private String attachment;
-    private String scheduleEmail; // kayaknya ini ga perlu
     //tidak bisa mengandung nama attribut "id" karena di service akan bingung setId nya (konten.getId, userId, atau templateId)
-    private Long user;
+    private String userName;
     private Long template;
 }
