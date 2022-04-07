@@ -5,6 +5,7 @@
  */
 package co.id.emailservice.serverside.service;
 
+import co.id.emailservice.serverside.model.EmailListName;
 import co.id.emailservice.serverside.model.Role;
 import co.id.emailservice.serverside.model.User;
 import co.id.emailservice.serverside.model.dto.UserData;
@@ -46,6 +47,10 @@ public class UserService {
         return userRepository.findById(id).orElseThrow(()
                 -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User tidak ditemukan")
         );
+    }
+
+    public List<EmailListName> findByEmail(String email) {
+        return userRepository.findByEmail(email).get().getEmailListName();
     }
 
     public User create(UserData userData) {

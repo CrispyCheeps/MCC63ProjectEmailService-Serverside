@@ -65,6 +65,7 @@ public class ParticipantService {
         return participant;
     }
 
+
     public void addParticipantsFromExcel (MultipartFile file, Long emailListNameId) {
         try {
             List<ParticipantData> participantsData = ExcelHelper.excelToParticipants(file.getInputStream());

@@ -5,6 +5,7 @@
  */
 package co.id.emailservice.serverside.controller;
 
+import co.id.emailservice.serverside.model.EmailListName;
 import co.id.emailservice.serverside.model.User;
 import co.id.emailservice.serverside.model.dto.UserData;
 import co.id.emailservice.serverside.service.UserService;
@@ -44,6 +45,11 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> getById(@PathVariable Long id) {
         return new ResponseEntity(userService.getById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/findByEmail/{email}")
+    public ResponseEntity<List<EmailListName>> getByEmail(@PathVariable String email) {
+        return new ResponseEntity(userService.findByEmail(email), HttpStatus.OK);
     }
     
     @PostMapping
