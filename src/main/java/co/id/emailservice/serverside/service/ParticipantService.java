@@ -42,7 +42,7 @@ public class ParticipantService {
 
     public Participant getById(Long id) {
         return participantRepository.findById(id).orElseThrow(()
-        -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Participant not Found"));
+                -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Participant not Found"));
     }
 
     public Participant create(ParticipantData participantData) {
