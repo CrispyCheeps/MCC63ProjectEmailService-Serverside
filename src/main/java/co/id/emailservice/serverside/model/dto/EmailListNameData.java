@@ -5,5 +5,5 @@ import lombok.Data;
 @Data
 public class EmailListNameData {
     private String name;
-    private Long userId;
+    private String userName;
 }

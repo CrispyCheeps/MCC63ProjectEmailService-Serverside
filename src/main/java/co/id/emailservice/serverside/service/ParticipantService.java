@@ -2,8 +2,11 @@ package co.id.emailservice.serverside.service;
 
 import co.id.emailservice.serverside.helper.ExcelHelper;
 import co.id.emailservice.serverside.model.Participant;
+import co.id.emailservice.serverside.model.User;
 import co.id.emailservice.serverside.model.dto.ParticipantData;
 import co.id.emailservice.serverside.repository.ParticipantRepository;
+import co.id.emailservice.serverside.repository.UserRepository;
+import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -23,18 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class ParticipantService {
 
     private ParticipantRepository participantRepository;
     private EmailListNameService emailListNameService;
     private ModelMapper modelMapper;
+    private UserRepository userRepository;
 
-    @Autowired
-    public ParticipantService(ParticipantRepository participantRepository, EmailListNameService emailListNameService, ModelMapper modelMapper) {
-        this.participantRepository = participantRepository;
-        this.emailListNameService = emailListNameService;
-        this.modelMapper = modelMapper;
-    }
 
     public List<Participant> getAll() {
         return participantRepository.findAll();
