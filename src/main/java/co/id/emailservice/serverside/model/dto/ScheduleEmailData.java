@@ -8,8 +8,8 @@ import java.util.Date;
 public class ScheduleEmailData {
 
     //nama attribut hrs sm dengan entity (modelMapper)
-    private Long emailListNameId;
-    private Long kontenId;
+    private String emailListName;
+    private String subject;
     private String tanggalKirim;
 
 }

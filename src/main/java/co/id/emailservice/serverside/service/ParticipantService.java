@@ -68,6 +68,7 @@ public class ParticipantService {
 
     public void addParticipantsFromExcel (MultipartFile file, Long emailListNameId) {
         try {
+
             List<ParticipantData> participantsData = ExcelHelper.excelToParticipants(file.getInputStream());
             List<Participant> participants = modelMapper.map(participantsData, new TypeToken<List<Participant>>() {}.getType());
             for (Participant participant : participants) {

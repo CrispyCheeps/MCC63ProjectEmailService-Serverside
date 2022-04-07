@@ -21,8 +21,8 @@ public class EmailController {
     }
 
     @PostMapping("{emailListNameId}/sendAll/{kontenId}")
-    public ResponseEntity<String> sendTemplateEmailToListParticipant(@PathVariable Long emailListNameId, @PathVariable Long kontenId) {
-        return new ResponseEntity(emailService.sendTemplateEmailToListParticipant(emailListNameId, kontenId), HttpStatus.OK);
+    public ResponseEntity<String> sendTemplateEmailToListParticipant(@PathVariable String emailListName, @PathVariable String subject) {
+        return new ResponseEntity(emailService.sendTemplateEmailToListParticipant(emailListName, subject), HttpStatus.OK);
     }
 
 }
