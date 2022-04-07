@@ -1,14 +1,9 @@
 package co.id.emailservice.serverside.service;
 
 import co.id.emailservice.serverside.helper.ExcelHelper;
-import co.id.emailservice.serverside.model.EmailListName;
 import co.id.emailservice.serverside.model.Participant;
-import co.id.emailservice.serverside.model.User;
 import co.id.emailservice.serverside.model.dto.ParticipantData;
-import co.id.emailservice.serverside.repository.EmailListNameRepository;
 import co.id.emailservice.serverside.repository.ParticipantRepository;
-import co.id.emailservice.serverside.repository.UserRepository;
-import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -28,14 +23,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class ParticipantService {
 
     private ParticipantRepository participantRepository;
     private EmailListNameService emailListNameService;
     private ModelMapper modelMapper;
-    private EmailListNameRepository emailListNameRepository;
-    private UserRepository userRepository;
+
+    @Autowired
+    public ParticipantService(ParticipantRepository participantRepository, EmailListNameService emailListNameService, ModelMapper modelMapper) {
+        this.participantRepository = participantRepository;
+        this.emailListNameService = emailListNameService;
+        this.modelMapper = modelMapper;
+    }
 
     public List<Participant> getAll() {
         return participantRepository.findAll();
@@ -66,21 +65,13 @@ public class ParticipantService {
         return participant;
     }
 
-    public void addParticipantsFromExcel (MultipartFile file, String email) {
+    public void addParticipantsFromExcel (MultipartFile file, Long emailListNameId) {
         try {
-
-
-            User user = userRepository.findByEmail(email).get();
-            EmailListName emailListName = new EmailListName();
-            for (EmailListName e : user.getEmailListName()) {
-                emailListName = e;
-            }
-
             List<ParticipantData> participantsData = ExcelHelper.excelToParticipants(file.getInputStream());
             List<Participant> participants = modelMapper.map(participantsData, new TypeToken<List<Participant>>() {}.getType());
             for (Participant participant : participants) {
                 participant.setId(null);
-                participant.setEmailListName(emailListName);
+                participant.setEmailListName(emailListNameService.getById(emailListNameId));
             }
             participantRepository.saveAll(participants);
 
