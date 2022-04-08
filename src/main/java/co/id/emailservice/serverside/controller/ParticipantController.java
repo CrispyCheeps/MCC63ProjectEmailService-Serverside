@@ -44,20 +44,21 @@ public class ParticipantController {
     }
 
     @PostMapping("/upload/{emailListNameId}")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable("emailListNameId") Long emailListNameId) {
-        String message = "";
-        if (ExcelHelper.hasExcelFormat(file)) {
-            try {
-                participantService.addParticipantsFromExcel(file, emailListNameId);
-                message = "Uploaded the file successfully: " + file.getOriginalFilename();
-                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
-            } catch (Exception e) {
-                message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
-            }
-        }
-        message = "Please upload an excel file!";
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+    public void uploadFile(@RequestBody List<ParticipantData> participants,@PathVariable("emailListNameId") Long emailListNameId) {
+//        String message = "";
+//        if (ExcelHelper.hasExcelFormat(file)) {
+//            try {
+//                participantService.addParticipantsFromExcel(file, emailListNameId);
+//                message = "Uploaded the file successfully: " + file.getOriginalFilename();
+//                return ResponseEntity.status(HttpStatus.OK).body(new ResponseMessage(message));
+//            } catch (Exception e) {
+//                message = "Could not upload the file: " + file.getOriginalFilename() + "!";
+//                return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED).body(new ResponseMessage(message));
+//            }
+//        }
+//        message = "Please upload an excel file!";
+//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ResponseMessage(message));
+        participantService.addParticipantsFromExcel(participants, emailListNameId);
     }
 
     @PutMapping("/{id}")
